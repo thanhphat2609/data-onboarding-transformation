@@ -1,0 +1,26 @@
+name: data_onboarding_transformation
+version: "0.1.0"
+config-version: 2
+profile: data_onboarding_transformation
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets: ["target", "dbt_packages"]
+
+# Sources read the Parquet landed by data-onboarding-ingestion (ADR-0004 there) under LAKE_RAW_ROOT:
+#   <LAKE_RAW_ROOT>/<system>/<schema>/<table>/ingest_date=YYYY-MM-DD/part-*
+models:
+  data_onboarding_transformation:
+    # Staging: one view per landed table, typed and deduplicated. Lives only in the
+    # DuckDB working file; nothing is written to the lake.
+    staging:
+      +materialized: view
+    # Marts: written as Parquet to the curated zone (external_root in profiles.yml).
+    marts:
+      +materialized: external
+      +format: parquet

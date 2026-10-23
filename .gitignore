@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+target/
+dbt_packages/
+logs/
+.user.yml
+*.duckdb
+*.duckdb.wal
+.lake/**
+!.lake/*/
+!.lake/*/.gitkeep
+.env

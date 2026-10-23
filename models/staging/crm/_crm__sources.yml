@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: crm
+    description: >
+      CRM tables landed by data-onboarding-ingestion (connection crm-sqlserver-*), one full snapshot
+      per ingest day. Only `part-*` files are read, so the `_SUCCESS` / `_manifest.json` markers
+      and unpublished `_staging/` output are never picked up.
+    config:
+      meta:
+        # LAKE_RAW_ROOT: e.g. abfss://raw@<account>.dfs.core.windows.net/parquet; {name} = table name.
+        external_location: >-
+          read_parquet('{{ env_var("LAKE_RAW_ROOT", ".lake/raw/parquet") }}/crm/dbo/{name}/*/part-*', hive_partitioning = true)
+    tables:
+      - name: customers
+        description: "Ingestion job crm-customers-daily: dbo.customers where is_deleted = 0."
+        columns:
+          - name: customer_id
+          - name: full_name
+          - name: segment_id
+          - name: updated_at
+          - name: ingest_date
+            description: Hive partition of the landing; one snapshot per day.
+          - name: _ingest_run_id
+          - name: _ingested_at

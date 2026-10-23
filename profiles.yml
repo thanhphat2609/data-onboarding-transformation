@@ -1,0 +1,27 @@
+# dbt looks for profiles.yml in the working directory first, so run dbt from the repo root.
+# Secrets never go here: everything comes from environment variables (see .env.example).
+data_onboarding_transformation:
+  target: "{{ env_var('DBT_TARGET', 'local') }}"
+  outputs:
+    # Lake on the local disk (.lake/), for development and CI. Same layout as ADLS.
+    local:
+      type: duckdb
+      path: local.duckdb
+      threads: 4
+      external_root: "{{ env_var('LAKE_CURATED_ROOT', '.lake/curated') }}"
+
+    # ADLS Gen2: reads raw Parquet landed by data-onboarding-ingestion, writes curated Parquet.
+    # Auth: the credential chain tries Azure CLI login (az login), then a service principal from
+    # AZURE_TENANT_ID / AZURE_CLIENT_ID / AZURE_CLIENT_SECRET, then a managed identity.
+    azure:
+      type: duckdb
+      path: azure.duckdb
+      threads: 4
+      extensions:
+        - azure
+      secrets:
+        - type: azure
+          provider: credential_chain
+          chain: "cli;env;managed_identity"
+          account_name: "{{ env_var('AZURE_STORAGE_ACCOUNT') }}"
+      external_root: "{{ env_var('LAKE_CURATED_ROOT') }}"
