@@ -8,6 +8,8 @@ Transformation layer for onboarded data: **dbt models on DuckDB (dbt-duckdb)** t
 
 ## How it fits
 
+![Architecture](docs/assets/architecture.svg)
+
 ```
 data-onboarding-ingestion                      data-onboarding-transformation (this repo)
   Flink job ─▶ abfss://raw@<account>/parquet/<system>/<schema>/<table>/ingest_date=YYYY-MM-DD/part-*
