@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: shop_customers_by_email_domain
+    description: >
+      Customers per email domain (latest snapshot). Written to
+      `<external_root>/shop_customers_by_email_domain.parquet` in the transformation container.
+    columns:
+      - name: email_domain
+        data_tests: [unique, not_null]
+      - name: customer_count
+        data_tests: [not_null]

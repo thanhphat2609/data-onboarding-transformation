@@ -1,4 +1,4 @@
--- Current state of CRM customers: the latest ingest day only. Written as Parquet to the curated zone.
+-- Current state of CRM customers: the latest ingest day only. Written as Parquet to the transformation container.
 select
     customer_id,
     full_name,

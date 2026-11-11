@@ -12,7 +12,8 @@ data_onboarding_transformation:
 
     # ADLS Gen2: reads raw Parquet landed by data-onboarding-ingestion, writes curated Parquet.
     # Auth: the credential chain tries Azure CLI login (az login), then a service principal from
-    # AZURE_TENANT_ID / AZURE_CLIENT_ID / AZURE_CLIENT_SECRET, then a managed identity.
+    # AZURE_TENANT_ID / AZURE_CLIENT_ID / AZURE_CLIENT_SECRET (the Azure SDK's own names, read by DuckDB; not renamed),
+    # then a managed identity.
     azure:
       type: duckdb
       path: azure.duckdb
@@ -23,5 +24,22 @@ data_onboarding_transformation:
         - type: azure
           provider: credential_chain
           chain: "cli;env;managed_identity"
-          account_name: "{{ env_var('AZURE_STORAGE_ACCOUNT') }}"
+          account_name: "{{ env_var('ADLS_STORAGE_ACCOUNT') }}"
+      external_root: "{{ env_var('LAKE_CURATED_ROOT') }}"
+
+    # ADLS Gen2 with a storage account key (prototype; the key comes from ADLS_ACCOUNT_KEY, a GitHub secret that the
+    # orchestration Deploy writes to the VM's .env). Use azure:// paths (LAKE_RAW_ROOT=azure://raw/parquet): the
+    # key does not work with abfss:// in the DuckDB azure extension.
+    # One name for the lake secret across the platform: ADLS_STORAGE_ACCOUNT and ADLS_ACCOUNT_KEY, as in
+    # data-onboarding-ingestion. `AccountName=` / `AccountKey=` below are only the field names of the Azure
+    # connection-string format, not our variables.
+    azure_key:
+      type: duckdb
+      path: azure_key.duckdb
+      threads: 4
+      extensions:
+        - azure
+      secrets:
+        - type: azure
+          connection_string: "DefaultEndpointsProtocol=https;AccountName={{ env_var('ADLS_STORAGE_ACCOUNT') }};AccountKey={{ env_var('ADLS_ACCOUNT_KEY') }};EndpointSuffix=core.windows.net"
       external_root: "{{ env_var('LAKE_CURATED_ROOT') }}"

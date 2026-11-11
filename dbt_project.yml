@@ -20,6 +20,9 @@ models:
     # DuckDB working file; nothing is written to the lake.
     staging:
       +materialized: view
+    # Intermediate: joins and current-state logic between staging and marts; views in the working file.
+    intermediate:
+      +materialized: view
     # Marts: written as Parquet to the curated zone (external_root in profiles.yml).
     marts:
       +materialized: external
