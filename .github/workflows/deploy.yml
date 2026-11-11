@@ -1,0 +1,50 @@
+# Fast-forwards the checkout of this repository on VM 1 to origin/main, so the dbt project that
+# data-onboarding-orchestration's Airflow mounts read-only (TRANSFORMATION_REPO_DIR, ADR-0004 there) is current.
+#
+# No build and no restart: Airflow reads this project fresh from disk on every dbt run, so a plain `git merge
+# --ff-only` is the whole deploy. If the VM's checkout ever has local commits (it shouldn't: nothing writes to it
+# but this workflow), the fast-forward fails loudly instead of discarding them.
+#
+# Disabled until the repository variable PROD_DEPLOY_ENABLED is "true".
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: >-
+      vars.PROD_DEPLOY_ENABLED == 'true' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'))
+    runs-on: ubuntu-24.04
+    env:
+      SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      SSH_PORT: ${{ vars.PROD_SSH_PORT || '22' }}
+      REPO_DIR: ${{ vars.PROD_TRANSFORMATION_DIR || '/opt/data-onboarding-transformation' }}
+      HOST: ${{ secrets.PROD_VM1_HOST }}
+    steps:
+      - name: SSH key
+        env:
+          SSH_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.PROD_SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_deploy ~/.ssh/known_hosts
+      - name: Fast-forward the checkout on VM 1
+        run: |
+          ssh -i ~/.ssh/id_deploy -p "$SSH_PORT" "$SSH_USER@$HOST" \
+            "set -e; git -C '$REPO_DIR' fetch --prune origin; git -C '$REPO_DIR' merge --ff-only origin/main; echo 'VM 1 now at:'; git -C '$REPO_DIR' log -1 --oneline"

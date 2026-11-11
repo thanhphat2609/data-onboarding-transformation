@@ -56,6 +56,25 @@ For the local target, put Parquet in the same layout under `.lake/raw/parquet/` 
 
 On Windows, if `pip install` fails with a missing file under `metricflow_semantic_interfaces`, the path is too long: create the venv in a short path or enable long paths.
 
+## Prod
+
+This repository has no application of its own on VM 1: data-onboarding-orchestration's Airflow mounts the project
+read-only and runs `dbt build` straight from it (ADR-0004 there), so "deploying" this repo is only ever getting the
+checkout on the VM current. The Deploy workflow does exactly that: on a green CI run on `main`, it SSHes to VM 1 and
+fast-forwards the checkout — no build, no container restart, no click needed.
+
+**Once, on VM 1:** the repository is already cloned at `/opt/data-onboarding-transformation` (next to
+data-onboarding-orchestration and data-onboarding-ingestion, `TRANSFORMATION_REPO_DIR` there).
+
+**Enable it:** set the repository variable `PROD_DEPLOY_ENABLED` to `true` (`false` while the VM is stopped, same
+convention as data-onboarding-orchestration). Everything else is a secret or variable of this repository, same names
+and values as there and as data-onboarding-ingestion (the SSH values repeat across all three): `PROD_SSH_PRIVATE_KEY`,
+`PROD_SSH_KNOWN_HOSTS`, `PROD_SSH_USER`, `PROD_VM1_HOST` (secrets); `PROD_SSH_PORT` (default `22`),
+`PROD_TRANSFORMATION_DIR` (default `/opt/data-onboarding-transformation`) (variables).
+
+A merge whose fast-forward fails (the VM's checkout has a commit `main` doesn't) stops the workflow instead of
+discarding it silently; nothing should ever commit there by hand.
+
 ## Roadmap
 
 | Phase | Content | Depends on |
