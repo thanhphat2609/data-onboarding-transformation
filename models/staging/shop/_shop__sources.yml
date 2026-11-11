@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: shop
+    description: >
+      Shop tables landed by data-onboarding-ingestion from MySQL (connection shop-mysql-connection), one full
+      snapshot per ingest day. Only `part-*` files are read, so markers and unpublished `_staging/` output are
+      never picked up.
+    config:
+      meta:
+        # LAKE_RAW_ROOT: e.g. azure://raw/parquet or abfss://raw@<account>.dfs.core.windows.net/parquet;
+        # {name} = table name.
+        external_location: >-
+          read_parquet('{{ env_var("LAKE_RAW_ROOT", ".lake/raw/parquet") }}/mysql/shop/{name}/*/part-*', hive_partitioning = true)
+    tables:
+      - name: customers
+        description: "Ingestion job mysql-shop-customers-manual: shop.customers (id, name, email, updated_at)."
+        columns:
+          - name: customer_id
+          - name: full_name
+          - name: email
+          - name: updated_at
+          - name: ingest_date
+            description: Hive partition of the landing; one snapshot per day.
+          - name: _ingest_run_id
+          - name: _ingested_at

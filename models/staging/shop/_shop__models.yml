@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: stg_shop__customers
+    description: All daily snapshots of shop customers, typed, one row per customer per ingest day.
+    columns:
+      - name: customer_id
+        data_tests: [not_null]
+      - name: ingest_date
+        data_tests: [not_null]
+      - name: full_name
+        data_tests: [not_null]

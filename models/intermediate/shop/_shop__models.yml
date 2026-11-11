@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: int_shop__customers_current
+    description: Latest snapshot of shop customers, one row per customer, with the email domain.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: email_domain
+        data_tests: [not_null]

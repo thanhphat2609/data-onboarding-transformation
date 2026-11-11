@@ -15,7 +15,7 @@ data-onboarding-ingestion                      data-onboarding-transformation (t
   Flink job ─▶ abfss://raw@<account>/parquet/<system>/<schema>/<table>/ingest_date=YYYY-MM-DD/part-*
                                    │
                                    ▼ read_parquet (DuckDB azure extension)
-                             staging views ─▶ marts ─▶ abfss://curated@<account>/dbt/<model>.parquet
+                             staging views ─▶ marts ─▶ abfss://transformation@<account>/dbt/<model>.parquet
 ```
 
 - Each `ingest_date` partition is one full snapshot of the source table (ingestion ADR-0004). Sources read only `part-*` files, so `_SUCCESS`, `_manifest.json` and `_staging/` are never picked up.
@@ -48,7 +48,7 @@ dbt build                                         # DBT_TARGET=local (default) o
 | `DBT_TARGET` | `local` (lake under `.lake/`) or `azure` |
 | `AZURE_STORAGE_ACCOUNT` | ADLS Gen2 account used by ingestion |
 | `LAKE_RAW_ROOT` | e.g. `abfss://raw@<account>.dfs.core.windows.net/parquet` |
-| `LAKE_CURATED_ROOT` | e.g. `abfss://curated@<account>.dfs.core.windows.net/dbt` |
+| `LAKE_CURATED_ROOT` | e.g. `abfss://transformation@<account>.dfs.core.windows.net/dbt` |
 | `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET` | Service principal for CI; empty = use `az login` |
 
 For the local target, put Parquet in the same layout under `.lake/raw/parquet/` and create `.lake/curated/` (DuckDB does not create missing folders on local disk).
