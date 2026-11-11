@@ -69,16 +69,16 @@
   <text class="bt" x="324" y="390">profiles.yml</text>
   <text class="bs" x="324" y="408">target local → .lake/</text>
   <text class="bs" x="324" y="424">target azure → ADLS Gen2</text>
-  <text class="bs" x="324" y="440">secrets from env vars</text>
+  <text class="bs" x="324" y="440">key: ADLS_ACCOUNT_KEY (env)</text>
   <rect class="dash" x="580" y="368" width="250" height="110" rx="8"/>
   <text class="bt" x="594" y="390">working database</text>
   <text class="bs" x="594" y="408">.duckdb file</text>
   <text class="bs" x="594" y="424">disposable</text>
   <text class="bs" x="594" y="440">output lives in the lake</text>
   <rect class="zone" x="890" y="60" width="330" height="220" rx="10"/>
-  <text class="zl" x="908" y="82">CURATED ZONE · ADLS GEN2</text>
+  <text class="zl" x="908" y="82">TRANSFORMATION ZONE · ADLS GEN2</text>
   <rect class="box" x="910" y="90" width="290" height="70" rx="8"/>
-  <text class="bt" x="924" y="112">curated / dbt / &lt;model&gt;.parquet</text>
+  <text class="bt" x="924" y="112">transformation/dbt/&lt;model&gt;.parquet</text>
   <text class="bs" x="924" y="130">dbt marts · analytics-ready</text>
   <rect class="dash" x="910" y="176" width="290" height="84" rx="8"/>
   <text class="bt" x="924" y="198">Consumers</text>
@@ -105,5 +105,5 @@
   <circle class="badge" cx="570" cy="167" r="10"/><text class="bn" x="570" y="171">2</text>
   <circle class="badge" cx="570" cy="263" r="10"/><text class="bn" x="570" y="267">3</text>
   <circle class="badge" cx="860" cy="125" r="10"/><text class="bn" x="860" y="129">4</text>
-  <text class="bs" x="20" y="530">1 read the newest snapshot · 2 staging views · 3 marts with tests · 4 write curated Parquet; Airflow (Asset) or CI starts the build</text>
+  <text class="bs" x="20" y="530">1 read the newest snapshot · 2 staging views · 3 marts with tests · 4 write Parquet to the transformation container; Airflow (Asset) or CI starts the build</text>
 </svg>

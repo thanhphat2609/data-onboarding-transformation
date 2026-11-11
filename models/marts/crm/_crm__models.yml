@@ -4,7 +4,7 @@ models:
   - name: crm_customers_current
     description: >
       Current CRM customers (latest snapshot). Written to
-      `<external_root>/crm_customers_current.parquet` in the curated zone.
+      `<external_root>/crm_customers_current.parquet` in the transformation container.
     columns:
       - name: customer_id
         data_tests: [unique, not_null]

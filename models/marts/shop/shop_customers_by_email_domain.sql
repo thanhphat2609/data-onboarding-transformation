@@ -1,4 +1,4 @@
--- Customers per email domain in the latest snapshot. Written as Parquet to the curated zone.
+-- Customers per email domain in the latest snapshot. Written as Parquet to the transformation container.
 select
     email_domain,
     count(*) as customer_count,
