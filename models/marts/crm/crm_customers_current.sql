@@ -4,6 +4,6 @@ select
     full_name,
     segment_id,
     updated_at,
-    ingest_date as snapshot_date,
+    snapshot_date,
     ingest_run_id
-from {{ latest_snapshot(ref('stg_crm__customers')) }}
+from {{ ref('int_crm__customers_current') }}

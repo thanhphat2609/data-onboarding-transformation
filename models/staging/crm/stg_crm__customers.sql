@@ -6,7 +6,10 @@ with source as (
 select
     cast(customer_id as integer) as customer_id,
     full_name,
+    lower(trim(email)) as email,
     cast(segment_id as integer) as segment_id,
+    cast(is_deleted as boolean) as is_deleted,
+    cast(created_at as timestamp) as created_at,
     cast(updated_at as timestamp) as updated_at,
     cast(ingest_date as date) as ingest_date,
     _ingest_run_id as ingest_run_id,
