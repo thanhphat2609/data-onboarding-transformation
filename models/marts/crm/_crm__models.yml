@@ -12,3 +12,13 @@ models:
         data_tests: [not_null]
       - name: snapshot_date
         data_tests: [not_null]
+
+  - name: crm_active_customers_by_segment
+    description: >
+      Active (non-deleted) customers per segment (latest snapshot). Written to
+      `<external_root>/crm_active_customers_by_segment.parquet` in the transformation container.
+    columns:
+      - name: segment_id
+        data_tests: [unique, not_null]
+      - name: customer_count
+        data_tests: [not_null]
