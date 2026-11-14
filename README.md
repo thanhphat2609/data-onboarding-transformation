@@ -10,6 +10,12 @@ Transformation layer for onboarded data: **dbt models on DuckDB (dbt-duckdb)** t
 
 ![Architecture](docs/assets/architecture.svg)
 
+## Demo Video
+
+[![Orchestration + Ingestion + Transformation demo](https://img.youtube.com/vi/mqt1bk2nVeQ/0.jpg)](https://youtu.be/mqt1bk2nVeQ)
+
+End-to-end demo across the three repos: [data-onboarding-orchestration](https://github.com/thanhphat2609/data-onboarding-orchestration) (Airflow), [data-onboarding-ingestion](https://github.com/thanhphat2609/data-onboarding-ingestion) (Flink), and [data-onboarding-transformation](https://github.com/thanhphat2609/data-onboarding-transformation) (dbt).
+
 ```
 data-onboarding-ingestion                      data-onboarding-transformation (this repo)
   Flink job ─▶ abfss://raw@<account>/parquet/<system>/<schema>/<table>/ingest_date=YYYY-MM-DD/part-*
